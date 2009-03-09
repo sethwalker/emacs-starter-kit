@@ -1,5 +1,7 @@
 ;; DESCRIPTION: topfunky settings
 
+(eval-after-load 'clojure-mode '(clojure-slime-config))
+
 (add-to-list 'load-path (concat dotfiles-dir "/vendor"))
 
 (require 'haml-mode)
