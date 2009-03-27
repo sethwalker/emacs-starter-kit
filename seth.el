@@ -1,5 +1,13 @@
 ;; DESCRIPTION: topfunky settings
 
+;; Interactively Do Things (highly recommended, but not strictly required)
+(require 'ido)
+(ido-mode t)
+     
+;; Rinari
+(add-to-list 'load-path (concat dotfiles-dir "/vendor/rinari"))
+(require 'rinari)
+
 (eval-after-load 'clojure-mode '(clojure-slime-config))
 
 (add-to-list 'load-path (concat dotfiles-dir "/vendor"))

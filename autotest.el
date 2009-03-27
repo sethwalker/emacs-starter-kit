@@ -3,7 +3,7 @@
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.0
+;; Version 1.0 beta 3
 ;; Keywords: testing, ruby, convenience
 ;; Created: 2006-11-17
 ;; Compatibility: Emacs 22, 21?
@@ -38,11 +38,10 @@
 ;; Sets up an autotest buffer and provides convenience methods.
 
 ;;; History:
-;; 1.0.0 - 2008-09-25 - Added an extra regexp for rspec/mspec. 1.0.0 release.
-;; 1.0b4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
-;; 1.0b3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
-;; 1.0b2 - 2007-04-03 - added autotest plugin / communication support
-;; 1.0b1 - 2007-03-06 - initial release
+;; 1.0 beta 4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
+;; 1.0 beta 3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
+;; 1.0 beta 2 - 2007-04-03 - added autotest plugin / communication support
+;; 1.0 beta 1 - 2007-03-06 - initial release
 
 (require 'shell)
 
@@ -56,9 +55,14 @@
   :group 'autotest
   :type '(string))
 
-(defun autotest ()
+(defcustom autospec-command "script/autospec"
+  "Command name to use to execute autospec."
+  :group 'autotest
+  :type '(string))
+
+(defun autotest (scope)
   "Fire up an instance of autotest in its own buffer with shell bindings and compile-mode highlighting and linking."
-  (interactive)
+  (interactive "sScope? ")
   (let ((buffer (shell "*autotest*")))
 
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
@@ -75,10 +79,13 @@
            ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
            ("^ *\\([[+]\\)?\\([^:
 ]+\\):\\([0-9]+\\):in" 2 3)
+           ("^\\(\\.[^(:]+\\):\\([0-9]+\\):" 1 2)
            ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
            ))
     (compilation-shell-minor-mode)
-    (comint-send-string buffer (concat autotest-command "\n"))))
+    (if (file-exists-p autospec-command)
+        (comint-send-string buffer (concat autospec-command " " scope "\n"))
+      (comint-send-string buffer (concat autotest-command " " scope "\n")))))
 
 (defun autotest-switch ()
   "Switch back and forth between autotest and the previous buffer"
